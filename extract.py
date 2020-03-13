@@ -121,39 +121,29 @@ def extract_keypoints(args):
         rep_thr = args.repeatability_thr)
 
     while args.images:
-        img_path = args.images.pop(0)
-        
-        if img_path.endswith('.txt'):
-            args.images = open(img_path).read().splitlines() + args.images
-            continue
-        
-        print(f"\nExtracting features for {img_path}")
-        img = Image.open(img_path).convert('RGB')
-        W, H = img.size
-        img = norm_RGB(img)[None] 
-        if iscuda: img = img.cuda()
-        
-        # extract keypoints/descriptors for a single image
-        xys, desc, scores = extract_multiscale(net, img, detector,
-            scale_f   = args.scale_f, 
-            min_scale = args.min_scale, 
-            max_scale = args.max_scale,
-            min_size  = args.min_size, 
-            max_size  = args.max_size, 
-            verbose = True)
+    img_path = args.images
 
-        xys = xys.cpu().numpy()
-        desc = desc.cpu().numpy()
-        scores = scores.cpu().numpy()
-        idxs = scores.argsort()[-args.top_k or None:]
-        
-        outpath = img_path + '.' + args.tag
-        print(f"Saving {len(idxs)} keypoints to {outpath}")
-        np.savez(open(outpath,'wb'), 
-            imsize = (W,H),
-            keypoints = xys[idxs], 
-            descriptors = desc[idxs], 
-            scores = scores[idxs])
+    print(f"\nExtracting features for {img_path}")
+    img = Image.open(img_path).convert('RGB')
+    W, H = img.size
+    img = norm_RGB(img)[None] 
+    if iscuda: img = img.cuda()
+
+    # extract keypoints/descriptors for a single image
+    xys, desc, scores = extract_multiscale(net, img, detector,
+        scale_f   = args.scale_f, 
+        min_scale = args.min_scale, 
+        max_scale = args.max_scale,
+        min_size  = args.min_size, 
+        max_size  = args.max_size, 
+        verbose = True)
+
+    xys = xys.cpu().numpy()
+    desc = desc.cpu().numpy()
+    scores = scores.cpu().numpy()
+    idxs = scores.argsort()[-args.top_k or None:]
+
+    return xys[idxs][:,:-1], desc[idxs]
 
 
 
