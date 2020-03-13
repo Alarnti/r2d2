@@ -124,10 +124,10 @@ def extract_keypoints(img_path):
     img = Image.open(img_path).convert('RGB')
     W, H = img.size
     img = norm_RGB(img)[None] 
-    if self.iscuda: img = img.cuda()
+    if iscuda: img = img.cuda()
 
     # extract keypoints/descriptors for a single image
-    xys, desc, scores = extract_multiscale(self.net, img, self.detector,
+    xys, desc, scores = extract_multiscale(net, img, detector,
         scale_f   = 2**0.25,#args.scale_f, 
         min_scale = 0,#args.min_scale, 
         max_scale = 1,#args.max_scale,
