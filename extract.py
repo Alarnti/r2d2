@@ -122,7 +122,7 @@ def extract_keypoints(img):
 
 
     img = img#Image.open(img_path).convert('RGB')
-    H, W = img.shape
+    H, W = img.shape[:-1]
     img = norm_RGB(img)[None] 
     if iscuda: img = img.cuda()
 
