@@ -120,7 +120,6 @@ def extract_keypoints(args):
         rel_thr = args.reliability_thr, 
         rep_thr = args.repeatability_thr)
 
-    while args.images:
     img_path = args.images
 
     print(f"\nExtracting features for {img_path}")
