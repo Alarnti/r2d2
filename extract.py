@@ -109,38 +109,40 @@ def extract_multiscale( net, img, detector, scale_f=2**0.25,
 
 
 def extract_keypoints(args):
-    iscuda = common.torch_set_gpu(args.gpu)
+    iscuda = common.torch_set_gpu([0])
 
     # load the network...
-    net = load_network(args.model)
+    net = load_network('r2d2/r2d2_WASF_N8_big.pt')
     if iscuda: net = net.cuda()
 
     # create the non-maxima detector
     detector = NonMaxSuppression(
-        rel_thr = args.reliability_thr, 
-        rep_thr = args.repeatability_thr)
+        rel_thr = 0.7, 
+        rep_thr = 0.7)
 
     img_path = args.images
 
-    print(f"\nExtracting features for {img_path}")
     img = Image.open(img_path).convert('RGB')
     W, H = img.size
     img = norm_RGB(img)[None] 
-    if iscuda: img = img.cuda()
+    if self.iscuda: img = img.cuda()
 
     # extract keypoints/descriptors for a single image
-    xys, desc, scores = extract_multiscale(net, img, detector,
-        scale_f   = args.scale_f, 
-        min_scale = args.min_scale, 
-        max_scale = args.max_scale,
-        min_size  = args.min_size, 
-        max_size  = args.max_size, 
+    xys, desc, scores = extract_multiscale(self.net, img, self.detector,
+        scale_f   = 2**0.25,#args.scale_f, 
+        min_scale = 0,#args.min_scale, 
+        max_scale = 1,#args.max_scale,
+        min_size  = 256,#args.min_size, 
+        max_size  = 1024,#args.max_size, 
         verbose = True)
 
     xys = xys.cpu().numpy()
     desc = desc.cpu().numpy()
     scores = scores.cpu().numpy()
-    idxs = scores.argsort()[-args.top_k or None:]
+    idxs = scores.argsort()[-5000:]
+
+    # outpath = img_path + '.' + args.tag
+    # print(f"Saving {len(idxs)} keypoints to {outpath}")
 
     return xys[idxs][:,:-1], desc[idxs]
 
