@@ -120,7 +120,6 @@ def extract_keypoints(img_path):
         rel_thr = 0.7, 
         rep_thr = 0.7)
 
-    img_path = args.images
 
     img = Image.open(img_path).convert('RGB')
     W, H = img.size
