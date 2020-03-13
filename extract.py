@@ -108,7 +108,7 @@ def extract_multiscale( net, img, detector, scale_f=2**0.25,
     return XYS, D, scores
 
 
-def extract_keypoints(img_path):
+def extract_keypoints(img):
     iscuda = common.torch_set_gpu([0])
 
     # load the network...
@@ -121,7 +121,7 @@ def extract_keypoints(img_path):
         rep_thr = 0.7)
 
 
-    img = Image.open(img_path).convert('RGB')
+    img = img#Image.open(img_path).convert('RGB')
     W, H = img.size
     img = norm_RGB(img)[None] 
     if iscuda: img = img.cuda()
