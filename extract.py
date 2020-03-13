@@ -112,7 +112,7 @@ def extract_keypoints(img_path):
     iscuda = common.torch_set_gpu([0])
 
     # load the network...
-    net = load_network('r2d2/r2d2_WASF_N8_big.pt')
+    net = load_network('r2d2/models/r2d2_WASF_N8_big.pt')
     if iscuda: net = net.cuda()
 
     # create the non-maxima detector
