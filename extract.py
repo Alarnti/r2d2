@@ -109,7 +109,7 @@ def extract_multiscale( net, img, detector, scale_f=2**0.25,
 
 
 def extract_keypoints(img):
-    iscuda = common.torch_set_gpu([0])
+    iscuda = torch.cuda.is_available()#common.torch_set_gpu([0])
 
     # load the network...
     net = load_network('r2d2/models/r2d2_WASF_N8_big.pt')
